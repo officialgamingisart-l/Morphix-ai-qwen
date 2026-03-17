@@ -1,0 +1,219 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import GlassButton from '../UI/GlassButton';
+import SecurityBadge from './SecurityBadge'; // Assume this component exists
+
+const IntelligenceIntake = ({ activePath, onSubmit }) => {
+  // State for manual form
+  const [manualData, setManualData] = useState({
+    name: '',
+    title: '',
+    location: '',
+    bio: '',
+    projects: [{ title: '', description: '' }],
+    socialLinks: { github: '', linkedin: '' },
+  });
+
+  // State for auto sync
+  const [syncUrl, setSyncUrl] = useState('');
+  const [syncFile, setSyncFile] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+
+  const handleManualChange = (e, index = null, field = null) => {
+    const { name, value } = e.target;
+    if (index !== null && field) {
+      const updatedProjects = [...manualData.projects];
+      updatedProjects[index][field] = value;
+      setManualData({ ...manualData, projects: updatedProjects });
+    } else if (name.startsWith('social_')) {
+      const socialField = name.split('_')[1];
+      setManualData({
+        ...manualData,
+        socialLinks: { ...manualData.socialLinks, [socialField]: value },
+      });
+    } else {
+      setManualData({ ...manualData, [name]: value });
+    }
+  };
+
+  const addProject = () => {
+    setManualData({
+      ...manualData,
+      projects: [...manualData.projects, { title: '', description: '' }],
+    });
+  };
+
+  const removeProject = (index) => {
+    if (manualData.projects.length > 1) {
+      const updatedProjects = manualData.projects.filter((_, i) => i !== index);
+      setManualData({ ...manualData, projects: updatedProjects });
+    }
+  };
+
+  const handleAutoSubmit = async (e) => {
+    e.preventDefault();
+    setIsScanning(true);
+
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Mock data extraction
+    const mockExtractedData = {
+      name: "John Doe",
+      title: "Senior Frontend Developer",
+      location: "San Francisco, CA",
+      bio: "Passionate about creating beautiful and functional web experiences.",
+      projects: [
+        { title: "Project Alpha", description: "A revolutionary web app." },
+        { title: "Project Beta", description: "An AI-powered tool." }
+      ],
+      socialLinks: { github: "https://github.com/johndoe", linkedin: "https://linkedin.com/in/johndoe" },
+      source: syncUrl || "Uploaded PDF"
+    };
+
+    setIsScanning(false);
+    // Show confirmation screen or directly submit
+    onSubmit(mockExtractedData); // Submit the mocked data
+  };
+
+  const handleManualSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(manualData); // Submit the manually entered data
+  };
+
+  return (
+    <>
+      {activePath === 'auto' ? (
+        <form onSubmit={handleAutoSubmit}>
+          <div className="mb-4 relative"> {/* Wrapper for badge positioning */}
+            <label className="block text-gray-300 mb-2">LinkedIn URL or Upload PDF:</label>
+            <input
+              type="url"
+              placeholder="https://www.linkedin.com/in/yourprofile"
+              value={syncUrl}
+              onChange={(e) => setSyncUrl(e.target.value)}
+              className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              disabled={isScanning}
+            />
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setSyncFile(e.target.files[0])}
+              className="w-full mt-2 p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              disabled={isScanning}
+            />
+            <SecurityBadge className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2" /> {/* Positioned badge */}
+          </div>
+          <GlassButton type="submit" variant="primary" disabled={isScanning}>
+            {isScanning ? 'Scanning...' : 'Sync Profile'}
+          </GlassButton>
+        </form>
+      ) : (
+        <form onSubmit={handleManualSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label className="block text-gray-300 mb-2">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={manualData.name}
+                onChange={handleManualChange}
+                className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-300 mb-2">Title</label>
+              <input
+                type="text"
+                name="title"
+                value={manualData.title}
+                onChange={handleManualChange}
+                className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-300 mb-2">Location</label>
+              <input
+                type="text"
+                name="location"
+                value={manualData.location}
+                onChange={handleManualChange}
+                className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2">Who are you? (Bio)</label>
+            <textarea
+              name="bio"
+              value={manualData.bio}
+              onChange={handleManualChange}
+              rows="3"
+              className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            ></textarea>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2">Projects & Experience</label>
+            {manualData.projects.map((project, index) => (
+              <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+                <input
+                  type="text"
+                  placeholder="Project Title"
+                  value={project.title}
+                  onChange={(e) => handleManualChange(e, index, 'title')}
+                  className="p-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <input
+                  type="text"
+                  placeholder="Description"
+                  value={project.description}
+                  onChange={(e) => handleManualChange(e, index, 'description')}
+                  className="p-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                {manualData.projects.length > 1 && (
+                  <button type="button" onClick={() => removeProject(index)} className="col-span-2 text-red-500 hover:text-red-400">
+                    Remove Project
+                  </button>
+                )}
+              </div>
+            ))}
+            <button type="button" onClick={addProject} className="text-indigo-400 hover:text-indigo-300">
+              + Add Project
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label className="block text-gray-300 mb-2">GitHub URL</label>
+              <input
+                type="url"
+                name="social_github"
+                value={manualData.socialLinks.github}
+                onChange={handleManualChange}
+                className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-300 mb-2">LinkedIn URL</label>
+              <input
+                type="url"
+                name="social_linkedin"
+                value={manualData.socialLinks.linkedin}
+                onChange={handleManualChange}
+                className="w-full p-3 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+
+          <GlassButton type="submit" variant="primary">
+            Submit Details
+          </GlassButton>
+        </form>
+      )}
+    </>
+  );
+};
+
+export default IntelligenceIntake;

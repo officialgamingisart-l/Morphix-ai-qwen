@@ -1,0 +1,33 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+
+// A small, interactive security badge component
+const SecurityBadge = ({ className = "" }) => {
+  const [showTooltip, setShowTooltip] = React.useState(false);
+
+  return (
+    <div className={`relative inline-block ${className}`}>
+      <motion.div
+        className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center cursor-pointer"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        whileHover={{ scale: 1.1 }}
+      >
+        <span className="text-emerald-400 text-sm">🔒</span>
+      </motion.div>
+      {showTooltip && (
+        <motion.div
+          className="absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-gray-800 text-white text-xs rounded-lg p-2 shadow-lg z-20 w-64 whitespace-normal"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+        >
+          Secure Sync: Morphix uses 256-bit encryption to read your profile. We don't store your resume; we only build your story. Data is purged upon request.{" "}
+          <a href="/privacy" className="text-indigo-400 underline">Read the Privacy Vault</a>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+export default SecurityBadge;
