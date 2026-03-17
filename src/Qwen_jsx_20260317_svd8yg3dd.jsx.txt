@@ -1,0 +1,69 @@
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from './components/Pages/LandingPage';
+import FormPage from './components/Pages/FormPage';
+import BuilderPage from './components/Pages/BuilderPage';
+import PreviewPage from './components/Pages/PreviewPage';
+import DevVaultPage from './components/Pages/DevVaultPage';
+import DocsPage from './components/Pages/DocsPage';
+import PrivacyPage from './components/Pages/PrivacyPage';
+import GlassLayout from './components/Layout/GlassLayout';
+
+// State management context could go here if needed, but keeping it simple initially
+function App() {
+  // Global state simulation
+  const [formData, setFormData] = useState(null); // Stores data from intake form
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Simulate auth
+  const [userPortfolios, setUserPortfolios] = useState([]); // Simulate user vault
+
+  return (
+    <Router>
+      {/* Wrap the main routing logic with the global layout */}
+      <GlassLayout>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/intake" element={<FormPage setFormData={setFormData} />} /> {/* Pass setFormData down */}
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/docs" element={<DocsPage />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/builder"
+            element={
+              isAuthenticated ? (
+                <BuilderPage formData={formData} />
+              ) : (
+                <Navigate to="/intake" replace />
+              )
+            }
+          />
+           <Route
+            path="/preview"
+            element={
+              isAuthenticated ? (
+                <PreviewPage formData={formData} />
+              ) : (
+                <Navigate to="/intake" replace />
+              )
+            }
+          />
+          <Route
+            path="/dev-vault"
+            element={
+              isAuthenticated ? (
+                <DevVaultPage portfolios={userPortfolios} setPortfolios={setUserPortfolios} />
+              ) : (
+                <Navigate to="/intake" replace />
+              )
+            }
+          />
+          {/* Catch-all route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </GlassLayout>
+    </Router>
+  );
+}
+
+export default App;
