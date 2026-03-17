@@ -1,0 +1,81 @@
+import React, { useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import GlassButton from '../UI/GlassButton';
+
+const LandingPage = () => {
+  const commandDeckRef = useRef(null); // Ref for the central glass pane
+
+  // Animation variants for entrance
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
+  };
+
+  // Animation for the light trail
+  const lightTrailVariants = {
+    initial: { x: '-100%' },
+    animate: { x: '100vw' },
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-8">
+      {/* Light Trail Effect - Could be made more sophisticated */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"
+        variants={lightTrailVariants}
+        initial="initial"
+        animate="animate"
+        transition={{ duration: 3, repeat: Infinity, repeatType: "loop" }}
+        style={{ zIndex: 5 }} // Above background, below content
+      />
+
+      {/* Central "Command Deck" Glass Pane */}
+      <motion.div
+        ref={commandDeckRef}
+        className="glass-pane w-full max-w-4xl mx-auto p-12 text-center"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{ borderRadius: '24px', margin: '20px' }} // Match glass-pane style
+      >
+        <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-600">
+          Morphix AI
+        </motion.h1>
+        <motion.p variants={itemVariants} className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+          Build award-winning portfolios. Learn the code. Own your narrative.
+        </motion.p>
+
+        <motion.div variants={itemVariants} className="mt-10">
+          <Link to="/intake">
+            <GlassButton variant="primary" size="lg">
+              Initiate Build
+            </GlassButton>
+          </Link>
+        </motion.div>
+
+        {/* Placeholder for floating glass feature cards */}
+        <motion.div variants={itemVariants} className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((id) => (
+            <GlassCard key={id} tiltOnHover className="p-6">
+              <h3 className="text-lg font-semibold mb-2">Feature {id}</h3>
+              <p className="text-gray-400">Description of the amazing feature.</p>
+            </GlassCard>
+          ))}
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default LandingPage;

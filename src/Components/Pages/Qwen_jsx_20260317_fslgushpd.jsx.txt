@@ -1,0 +1,84 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import GlassButton from '../UI/GlassButton';
+import PortfolioBuilder from '../Features/PortfolioBuilder'; // Assume this component exists
+
+const BuilderPage = ({ formData }) => { // Receive formData prop
+  const navigate = useNavigate();
+  const [currentTheme, setCurrentTheme] = useState('minimal');
+  const [sonicUXEnabled, setSonicUXEnabled] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState(''); // Simulate code generation
+
+  const handleThemeChange = (newTheme) => {
+    setCurrentTheme(newTheme);
+  };
+
+  const handlePreview = () => {
+    // In a real app, this might pass state or context to the preview page
+    navigate('/preview');
+  };
+
+  const handleExport = () => {
+    // Simulate code generation
+    setGeneratedCode(`// Generated React + Tailwind Code for ${formData?.name}'s portfolio\n// Theme: ${currentTheme}\n// ...`);
+    alert("Code generated! Check the Preview page for export options.");
+    navigate('/preview');
+  };
+
+  if (!formData) {
+    return <div className="text-center p-8">No data found. Please start from the intake form.</div>;
+  }
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-160px)] p-4"> {/* Subtract header/footer height if any */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Portfolio Builder</h2>
+        <div className="flex space-x-2">
+          <select
+            value={currentTheme}
+            onChange={(e) => handleThemeChange(e.target.value)}
+            className="p-2 rounded-lg bg-gray-800/50 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="glass">Glass-on-Dark</option>
+            <option value="nature">Nature</option>
+            <option value="brutalist">Brutalist</option>
+            <option value="minimal">Minimal</option>
+          </select>
+          <button
+            onClick={() => setSonicUXEnabled(!sonicUXEnabled)}
+            className={`p-2 rounded-lg ${sonicUXEnabled ? 'bg-indigo-600' : 'bg-gray-700'}`}
+          >
+            {sonicUXEnabled ? '🔊 Sonic UX On' : '🔇 Sonic UX Off'}
+          </button>
+          <GlassButton onClick={handlePreview} variant="secondary">Preview</GlassButton>
+          <GlassButton onClick={handleExport} variant="primary">Export</GlassButton>
+        </div>
+      </div>
+
+      <div className="flex-grow flex">
+        {/* Left Sidebar - AI Architect (Simulated) */}
+        <div className="w-1/4 mr-4 glass-pane p-4 rounded-xl overflow-y-auto">
+          <h3 className="font-semibold mb-2">AI Architect</h3>
+          <div className="space-y-2">
+            <div className="p-2 bg-gray-800/30 rounded">Suggesting layout for '{formData.title}'...</div>
+            <div className="p-2 bg-gray-800/30 rounded">Optimizing for '{currentTheme}' theme...</div>
+            <div className="p-2 bg-gray-800/30 rounded">Refining headline text...</div>
+          </div>
+        </div>
+
+        {/* Right Side - Portfolio Preview Canvas */}
+        <div className="w-3/4 glass-pane rounded-xl overflow-hidden relative"> {/* The "Command Center" canvas area */}
+          <PortfolioBuilder
+            formData={formData}
+            theme={currentTheme}
+            sonicUX={sonicUXEnabled}
+            setGeneratedCode={setGeneratedCode} // Pass setter down if needed within builder
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BuilderPage;

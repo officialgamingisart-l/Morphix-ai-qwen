@@ -1,0 +1,38 @@
+import React from 'react';
+import GlassCard from '../UI/GlassCard';
+
+const DocsPage = () => {
+  return (
+    <div className="p-8 max-w-4xl mx-auto">
+      <h2 className="text-3xl font-bold mb-8">Documentation & The Blueprint</h2>
+
+      <GlassCard className="mb-6 p-6">
+        <h3 className="text-xl font-semibold mb-4">How Morphix Works</h3>
+        <p className="text-gray-300 mb-2">Morphix combines advanced AI with cutting-edge web technologies like Framer Motion and Three.js to generate unique, high-performance portfolios.</p>
+        <p className="text-gray-300">The AI acts as your Creative Director, architecting layouts and suggesting content, while the rendering engine brings it to life with fluid animations and depth.</p>
+      </GlassCard>
+
+      <GlassCard className="mb-6 p-6">
+        <h3 className="text-xl font-semibold mb-4">API Documentation</h3>
+        <p className="text-gray-300 mb-2">Coming Soon: Detailed endpoints for integrating the Morphix Narrative Engine into external tools.</p>
+        {/* <pre className="bg-gray-900 p-4 rounded text-sm overflow-x-auto">
+          POST /api/v1/generate-portfolio
+          Content-Type: application/json
+          { "user_data": {...}, "theme": "nature" }
+        </pre> */}
+      </GlassCard>
+
+      <GlassCard className="p-6">
+        <h3 className="text-xl font-semibold mb-4">Technology Stack</h3>
+        <ul className="list-disc list-inside text-gray-300 space-y-1">
+          <li><strong>Frontend:</strong> React.js, Tailwind CSS, Framer Motion, GSAP</li>
+          <li><strong>AI Intelligence:</strong> Google Gemini 2.5 Flash, Google Imagen 4.0</li>
+          <li><strong>Backend:</strong> Node.js/Express (Conceptual), MongoDB (Simulation)</li>
+          <li><strong>Deployment:</strong> Optimized for Vercel/Netlify</li>
+        </ul>
+      </GlassCard>
+    </div>
+  );
+};
+
+export default DocsPage;

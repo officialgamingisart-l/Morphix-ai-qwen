@@ -1,0 +1,123 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import GlassButton from '../UI/GlassButton';
+import PortfolioBuilder from '../Features/PortfolioBuilder'; // Reuse the builder component for preview
+
+const PreviewPage = ({ formData }) => { // Receive formData prop
+  const navigate = useNavigate();
+  const [showCode, setShowCode] = useState(false);
+  const [generatedCode, setGeneratedCode] = useState(''); // State to hold generated code
+
+  // Simulate getting code from builder or state passed down
+  // In a real app, this would likely come from context or be generated here
+  const mockGeneratedCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${formData?.name}'s Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #030303; color: #f0f0f0; }
+    .glass-pane { backdrop-filter: blur(20px) saturate(180%); background: rgba(10, 10, 10, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); margin: 20px; border-radius: 24px; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+  <div class="glass-pane max-w-4xl w-full p-12 text-center">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4">${formData?.name}</h1>
+    <p class="text-xl text-gray-300 mb-6">${formData?.title}</p>
+    <p class="text-lg text-gray-400 mb-8">${formData?.location}</p>
+    <p class="text-gray-300 mb-12 max-w-2xl mx-auto">${formData?.bio}</p>
+    <div class="flex justify-center space-x-4">
+      <a href="${formData?.socialLinks?.github}" class="text-indigo-400 hover:text-indigo-300">GitHub</a>
+      <a href="${formData?.socialLinks?.linkedin}" class="text-indigo-400 hover:text-indigo-300">LinkedIn</a>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const handleDownloadCode = () => {
+    const blob = new Blob([mockGeneratedCode], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${formData?.name}_portfolio.zip`; // Simplified filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDeploy = () => {
+    alert("Deployment functionality would integrate with Vercel/Netlify API here.");
+    // Real implementation would use Vercel/Netlify deployment APIs
+  };
+
+  const handleGeneratePDF = () => {
+    alert("PDF generation functionality would use a library like jsPDF here.");
+    // Real implementation would use jsPDF or similar
+  };
+
+  if (!formData) {
+    return <div className="text-center p-8">No data found for preview.</div>;
+  }
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-160px)] p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Final Preview</h2>
+        <div className="flex space-x-2">
+          <GlassButton onClick={() => setShowCode(!showCode)} variant="secondary">
+            {showCode ? 'Hide Code' : 'Show Code'}
+          </GlassButton>
+          <GlassButton onClick={handleDownloadCode} variant="primary">Download Source</GlassButton>
+          <GlassButton onClick={handleDeploy} variant="secondary">Deploy</GlassButton>
+          <GlassButton onClick={handleGeneratePDF} variant="secondary">Generate PDF</GlassButton>
+        </div>
+      </div>
+
+      <div className="flex-grow flex">
+        {/* Preview Canvas */}
+        <div className="w-2/3 glass-pane rounded-xl overflow-auto mr-4">
+          {!showCode ? (
+            <PortfolioBuilder formData={formData} theme="glass" /> // Reuse builder component in preview mode
+          ) : (
+            <pre className="p-4 text-sm text-gray-300 overflow-auto max-h-full bg-gray-900 rounded">
+              {mockGeneratedCode}
+            </pre>
+          )}
+        </div>
+
+        {/* Code Console Panel (Slide-out logic can be added later) */}
+        <div className="w-1/3 glass-pane rounded-xl p-4 overflow-auto">
+          <h3 className="font-semibold mb-2">Generated Code (React + Tailwind)</h3>
+          <pre className="text-xs text-gray-300 overflow-auto max-h-full bg-gray-900 rounded p-2">
+{`import React from 'react';
+
+const PortfolioPreview = ({ data }) => {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#030303] text-[#f0f0f0]">
+      <div className="glass-pane max-w-4xl w-full p-12 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4">{data.name}</h1>
+        <p className="text-xl text-gray-300 mb-6">{data.title}</p>
+        <p className="text-lg text-gray-400 mb-8">{data.location}</p>
+        <p className="text-gray-300 mb-12 max-w-2xl mx-auto">{data.bio}</p>
+        <div className="flex justify-center space-x-4">
+          <a href={data.socialLinks.github} className="text-indigo-400 hover:text-indigo-300">GitHub</a>
+          <a href={data.socialLinks.linkedin} className="text-indigo-400 hover:text-indigo-300">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PortfolioPreview;`}
+          </pre>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PreviewPage;

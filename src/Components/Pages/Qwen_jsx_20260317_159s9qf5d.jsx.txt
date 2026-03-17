@@ -1,0 +1,55 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import GlassButton from '../UI/GlassButton';
+import IntelligenceIntake from '../Features/IntelligenceIntake';
+import GlassCard from '../UI/GlassCard';
+
+const FormPage = ({ setFormData }) => { // Receive setFormData prop
+  const navigate = useNavigate();
+  const [activePath, setActivePath] = useState('manual'); // 'auto' or 'manual'
+
+  const handleSubmit = (data) => {
+    console.log("Form submitted with ", data);
+    // Simulate processing time
+    setTimeout(() => {
+      setFormData(data); // Pass data up to App.js state
+      // Simulate successful authentication/login after form submission
+      localStorage.setItem('morphixAuth', 'true'); // Simple token storage simulation
+      navigate('/builder'); // Navigate to builder after successful submission
+    }, 500); // 0.5s delay for demo
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-8">
+      <GlassCard className="w-full max-w-3xl p-8">
+        <h2 className="text-3xl font-bold mb-8 text-center">Intelligence Intake</h2>
+
+        <div className="flex mb-6 space          <button
+            className={`px-4 py-2 rounded-lg ${
+              activePath === 'manual' ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300'
+            }`}
+            onClick={() => setActivePath('manual')}
+          >
+            Manual Architecture
+          </button>
+          <button
+            className={`px-4 py-2 rounded-lg ${
+              activePath === 'auto' ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300'
+            }`}
+            onClick={() => setActivePath('auto')}
+          >
+            Autonomous Sync (Pro)
+          </button>
+        </div>
+
+        <IntelligenceIntake
+          activePath={activePath}
+          onSubmit={handleSubmit} // Pass handleSubmit down
+        />
+      </GlassCard>
+    </div>
+  );
+};
+
+export default FormPage;

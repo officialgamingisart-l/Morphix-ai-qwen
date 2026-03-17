@@ -1,0 +1,58 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import GlassCard from '../UI/GlassCard';
+
+const PrivacyPage = () => {
+
+  // Animation variant for sections revealed by light trail
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
+  return (
+    <div className="p-8 max-w-4xl mx-auto">
+      {/* Decorative 3D Shield Icon (Conceptual - needs SVG or 3D lib) */}
+      <div className="relative h-32 mb-8 flex items-center justify-center">
+         <motion.div
+            className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center"
+            animate={{ rotateY: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+         >
+            <span className="text-2xl">🛡️</span> {/* Placeholder for actual 3D shield */}
+         </motion.div>
+      </div>
+
+      <h2 className="text-3xl font-bold mb-8 text-center">Privacy & Security Vault</h2>
+
+      <motion.div variants={sectionVariants} initial="hidden" animate="visible" className="space-y-6">
+        <GlassCard className="p-6">
+          <h3 className="text-xl font-semibold mb-2">Data Collection & Sync</h3>
+          <p className="text-gray-300">When using the Autonomous Sync feature, Morphix AI accesses publicly available data from your LinkedIn profile or the content of your uploaded PDF. We do not access private information or bypass privacy settings.</p>
+        </GlassCard>
+
+        <GlassCard className="p-6">
+          <h3 className="text-xl font-semibold mb-2">Data Processing & Storage</h3>
+          <p className="text-gray-300">Your raw data (resume/PDF content) is processed temporarily in a volatile memory session. It is used solely to generate your portfolio's JSON structure and is then discarded. We only store the final processed data needed to power your portfolio within your encrypted user session.</p>
+        </GlassCard>
+
+        <GlassCard className="p-6">
+          <h3 className="text-xl font-semibold mb-2">No Training Clause</h3>
+          <p className="text-gray-300">Your personal and professional information is never used to train, refine, or improve our underlying AI models. Your data remains yours.</p>
+        </GlassCard>
+
+        <GlassCard className="p-6">
+          <h3 className="text-xl font-semibold mb-2">User Control & Deletion</h3>
+          <p className="text-gray-300">You have full control over your data. Within your Dev-Vault, you can permanently delete any portfolio and its associated data at any time. Upon deletion, the data is purged from our systems.</p>
+        </GlassCard>
+
+        <GlassCard className="p-6">
+          <h3 className="text-xl font-semibold mb-2">Security Infrastructure</h3>
+          <p className="text-gray-300">All data transfers occur over secure 256-bit SSL/TLS connections. Access to your portfolio data is protected by your authenticated session.</p>
+        </GlassCard>
+      </motion.div>
+    </div>
+  );
+};
+
+export default PrivacyPage;
