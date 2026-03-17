@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-indigo-500 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-indigo-400;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  background-color: #030303; /* Deep space background */
+  color: #f0f0f0; /* Default text color */
+  min-height: 100vh;
+  /* Ensure background covers the whole viewport */
+  background-size: cover;
+  background-attachment: fixed;
+  /* Optional: Add a subtle texture or pattern if desired */
+  /* background-image: url('path/to/subtle-texture.png'); */
+}
+
+/* Custom cursor style */
+html {
+  cursor: none; /* Hide default cursor */
+}
+
+/* Define keyframes for light trail effect */
+@keyframes lightTrail {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
+}
+
+/* Define keyframes for particle burst */
+@keyframes particleBurst {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Define keyframes for ignite reveal */
+@keyframes igniteReveal {
+  0% { opacity: 0; transform: translateX(-10px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Define keyframes for 3D tilt */
+@keyframes tiltIn {
+  0% { transform: perspective(1200px) rotateY(0deg) rotateX(0deg); }
+  100% { transform: perspective(1200px) rotateY(var(--tx, 0)) rotateX(var(--ty, 0)); }
+}
