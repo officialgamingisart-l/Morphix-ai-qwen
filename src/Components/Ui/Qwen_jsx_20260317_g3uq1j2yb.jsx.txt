@@ -1,0 +1,24 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+
+// Reusable card component with glass effect and optional 3D tilt
+const GlassCard = ({ children, className = '', tiltOnHover = false, ...props }) => {
+  const cardClasses = `glass-pane ${className}`;
+
+  return (
+    <motion.div
+      className={cardClasses}
+      whileHover={tiltOnHover ? {
+        scale: 1.02,
+        rotateX: 5,
+        rotateY: 5,
+        transition: { duration: 0.3 },
+      } : {}}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+export default GlassCard;

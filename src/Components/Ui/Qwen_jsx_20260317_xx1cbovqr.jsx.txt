@@ -1,0 +1,92 @@
+import React, { useRef } from 'react';
+import { motion, useTransform, useMotionValue } from 'framer-motion';
+
+// Reusable button component with glass effect and particle burst on hover/click
+const GlassButton = ({
+  children,
+  onClick,
+  variant = 'primary', // 'primary', 'secondary', 'outline'
+  size = 'md', // 'sm', 'md', 'lg'
+  className = '',
+  ...props
+}) => {
+  const buttonRef = useRef(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const handleMouse = (e) => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
+  // Calculate distance from center for particle burst origin
+  const distanceFromCenter = useTransform([mouseX, mouseY], ([x, y]) => {
+    if (!buttonRef.current) return { x: 0, y: 0 };
+    const rect = buttonRef.current.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    return { x: x - centerX, y: y - centerY };
+  });
+
+  // Size classes
+  const sizeClasses = {
+    sm: 'text-sm px-4 py-2',
+    md: 'text-base px-6 py-3',
+    lg: 'text-lg px-8 py-4',
+  };
+
+  // Variant classes
+  const variantClasses = {
+    primary: 'bg-indigo-600/30 border border-indigo-500/30 hover:bg-indigo-500/40',
+    secondary: 'bg-gray-800/30 border border-gray-700/30 hover:bg-gray-700/40',
+    outline: 'bg-transparent border border-indigo-500/50 hover:bg-indigo-500/10',
+  };
+
+  const baseClasses = `glass-pane inline-flex items-center justify-center font-medium rounded-xl transition-all duration-300 ease-out cursor-pointer relative overflow-hidden ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
+
+  return (
+    <motion.button
+      ref={buttonRef}
+      className={baseClasses}
+      onClick={onClick}
+      onMouseMove={handleMouse}
+      whileHover={{ scale: 1.05 }} // Simple scale effect
+      whileTap={{ scale: 0.95 }} // Simple tap effect
+      {...props}
+    >
+      {/* Glowing effect on hover */}
+      <motion.div
+        className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at ${mouseX}px ${mouseY}px, rgba(99, 102, 241, 0.3), transparent 80%)`, // Indigo glow
+        }}
+      />
+
+      {/* Particle Burst Effect */}
+      <motion.div
+        className="absolute w-4 h-4 bg-white rounded-full pointer-events-none opacity-0"
+        style={{
+          left: distanceFromCenter.x,
+          top: distanceFromCenter.y,
+        }}
+        initial={{ scale: 0, opacity: 0 }}
+        whileHover={{ scale: 1, opacity: 0.8 }}
+        transition={{ duration: 0.2 }}
+        animate={{
+          scale: [0, 1.5, 0],
+          opacity: [0.8, 0.4, 0],
+        }}
+        onAnimationComplete={(definition) => {
+             // Reset animation state after completion if needed, though Framer Motion handles this generally
+             // This is more for complex custom resets if required later
+        }}
+      />
+
+      {children}
+    </motion.button>
+  );
+};
+
+export default GlassButton;
